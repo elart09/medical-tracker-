@@ -1,0 +1,2558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Practice Financial Tracker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            animation: containerFadeIn 0.8s ease-out;
+            backdrop-filter: blur(10px);
+        }
+
+        @keyframes containerFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            animation: backgroundMove 20s linear infinite;
+        }
+
+        @keyframes backgroundMove {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(20px) translateY(20px); }
+        }
+
+        .header h1 {
+            font-size: 2.4em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+            animation: titleSlideIn 1s ease-out 0.3s both;
+        }
+
+        .header p {
+            position: relative;
+            z-index: 2;
+            animation: titleSlideIn 1s ease-out 0.5s both;
+        }
+
+        @keyframes titleSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .nav-tab {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px 10px;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: #667eea;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(-50%);
+        }
+
+        .nav-tab.active {
+            background: white;
+            color: #2c3e50;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .nav-tab.active::before {
+            width: 100%;
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: #e9ecef;
+            transform: translateY(-1px);
+            color: #2c3e50;
+        }
+
+        .nav-tab:hover:not(.active)::before {
+            width: 50%;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            animation: fadeInSlide 0.5s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeInSlide {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e6ed;
+            transition: all 0.3s ease;
+            animation: sectionSlideIn 0.6s ease-out;
+        }
+
+        .section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes sectionSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            animation: underlineExpand 0.8s ease-out 0.3s both;
+        }
+
+        @keyframes underlineExpand {
+            to {
+                width: 100%;
+            }
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            animation: formGroupSlide 0.4s ease-out;
+        }
+
+        @keyframes formGroupSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        label {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            transition: color 0.3s ease;
+        }
+
+        input, select, textarea {
+            padding: 12px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        input:focus + label, select:focus + label, textarea:focus + label {
+            color: #667eea;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-top: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e0e6ed;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: cardSlideUp 0.6s ease-out;
+        }
+
+        .summary-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .summary-card:hover::before {
+            left: 100%;
+        }
+
+        @keyframes cardSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .summary-card h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            position: relative;
+            z-index: 2;
+        }
+
+        .summary-card .amount {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .summary-card:hover .amount {
+            transform: scale(1.05);
+        }
+
+        .summary-card .subtitle {
+            font-size: 0.9em;
+            color: #6c757d;
+            position: relative;
+            z-index: 2;
+        }
+
+        .amount.income { color: #28a745; }
+        .amount.expense { color: #dc3545; }
+        .amount.profit { color: #667eea; }
+        .amount.neutral { color: #6c757d; }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            animation: tableSlideIn 0.6s ease-out;
+        }
+
+        @keyframes tableSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .data-table th {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 15px 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9em;
+            position: relative;
+        }
+
+        .data-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #e0e6ed;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .data-table tr {
+            transition: all 0.3s ease;
+        }
+
+        .data-table tr:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.01);
+        }
+
+        .data-table tr:hover td {
+            box-shadow: inset 0 0 10px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-export {
+            background: #27ae60;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-right: 10px;
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-export::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        .btn-export:hover {
+            background: #219a52;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-export:hover::before {
+            width: 200px;
+            height: 200px;
+        }
+
+        .delete-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+
+        .btn-small {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-right: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-small:hover {
+            background: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .status-current { 
+            background-color: #28a745; 
+            color: white; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            font-size: 0.8em;
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+        
+        .status-overdue { 
+            background-color: #dc3545; 
+            color: white; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            font-size: 0.8em;
+            animation: statusPulse 1s ease-in-out infinite;
+        }
+        
+        .status-paid { 
+            background-color: #6c757d; 
+            color: white; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            font-size: 0.8em; 
+        }
+
+        .status-pending { 
+            background-color: #ffc107; 
+            color: #212529; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            font-size: 0.8em;
+            animation: statusPulse 2s ease-in-out infinite;
+        }
+
+        .status-generated { 
+            background-color: #17a2b8; 
+            color: white; 
+            padding: 4px 8px; 
+            border-radius: 4px; 
+            font-size: 0.8em; 
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .alert-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #ffc107;
+            animation: alertSlideIn 0.5s ease-out;
+        }
+
+        @keyframes alertSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .alert-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateX(400px);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.error {
+            background: #dc3545;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #e0e6ed;
+            border-radius: 2px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transform: scale(0.9);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+
+            .tab-content {
+                padding: 20px;
+            }
+        }
+
+        .fade-enter {
+            animation: fadeInSlide 0.5s ease-out;
+        }
+
+        .bounce-in {
+            animation: bounceIn 0.6s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .slide-up {
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Medical Practice Financial Tracker</h1>
+            <p>Income • Expenses • Fixed Expenses • Receivables • Payables • Reports</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('dashboard')">Dashboard</button>
+            <button class="nav-tab" onclick="showTab('income')">Income</button>
+            <button class="nav-tab" onclick="showTab('expenses')">Expenses</button>
+            <button class="nav-tab" onclick="showTab('fixed-expenses')">Fixed Expenses</button>
+            <button class="nav-tab" onclick="showTab('receivables')">Receivables</button>
+            <button class="nav-tab" onclick="showTab('payables')">Payables</button>
+            <button class="nav-tab" onclick="showTab('reports')">Reports</button>
+            <button class="nav-tab" onclick="showTab('data')">Data</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="summary-cards">
+                <div class="summary-card">
+                    <h3>Monthly Income</h3>
+                    <div class="amount income" id="monthlyIncome">€0.00</div>
+                    <div class="subtitle">Current month</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Monthly Expenses</h3>
+                    <div class="amount expense" id="monthlyExpenses">€0.00</div>
+                    <div class="subtitle">Current month</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Monthly Profit</h3>
+                    <div class="amount profit" id="monthlyProfit">€0.00</div>
+                    <div class="subtitle">Income - Expenses</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Fixed Expenses Due</h3>
+                    <div class="amount neutral" id="fixedExpensesDue">€0.00</div>
+                    <div class="subtitle">Pending this month</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Outstanding Receivables</h3>
+                    <div class="amount income" id="totalReceivables">€0.00</div>
+                    <div class="subtitle">Money owed to you</div>
+                </div>
+                <div class="summary-card">
+                    <h3>Outstanding Payables</h3>
+                    <div class="amount expense" id="totalPayables">€0.00</div>
+                    <div class="subtitle">Money you owe</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Service Overview</h2>
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <h3>Internal Medicine</h3>
+                        <div class="amount income" id="internalMedicineIncome">€0.00</div>
+                        <div class="subtitle">This month</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Acupuncture</h3>
+                        <div class="amount income" id="acupunctureIncome">€0.00</div>
+                        <div class="subtitle">This month</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Diabetology</h3>
+                        <div class="amount income" id="diabetologyIncome">€0.00</div>
+                        <div class="subtitle">This month</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Patients This Month</h3>
+                        <div class="amount neutral" id="monthlyPatients">0</div>
+                        <div class="subtitle">Unique patients</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Income Tab -->
+        <div id="income" class="tab-content">
+            <div class="section">
+                <h2>Add Income Entry</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="incomeDate">Date</label>
+                        <input type="date" id="incomeDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="incomeAmount">Amount (€)</label>
+                        <input type="number" id="incomeAmount" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="incomeService">Service Type</label>
+                        <select id="incomeService" required>
+                            <option value="">Select Service</option>
+                            <option value="internal">Internal Medicine</option>
+                            <option value="acupuncture">Acupuncture</option>
+                            <option value="diabetes">Diabetology</option>
+                            <option value="consultation">General Consultation</option>
+                            <option value="procedure">Medical Procedure</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="paymentType">Payment Method</label>
+                        <select id="paymentType" required>
+                            <option value="">Select Method</option>
+                            <option value="cash">Cash</option>
+                            <option value="card">Card</option>
+                            <option value="transfer">Bank Transfer</option>
+                            <option value="insurance">Insurance</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="patientRef">Patient Reference</label>
+                        <input type="text" id="patientRef" placeholder="Patient ID or initials">
+                    </div>
+                    <div class="form-group">
+                        <label for="incomeNotes">Notes</label>
+                        <input type="text" id="incomeNotes" placeholder="Additional notes">
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button class="btn-primary" onclick="addIncome()">Add Income</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Income Records</h2>
+                <button class="btn-export" onclick="exportIncomeCSV()">Export CSV</button>
+                <button class="btn-export" onclick="clearIncome()">Clear All</button>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Service</th>
+                            <th>Amount</th>
+                            <th>Payment</th>
+                            <th>Patient</th>
+                            <th>Notes</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="incomeTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Expenses Tab -->
+        <div id="expenses" class="tab-content">
+            <div class="section">
+                <h2>Add Expense Entry</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="expenseDate">Date</label>
+                        <input type="date" id="expenseDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseAmount">Amount (€)</label>
+                        <input type="number" id="expenseAmount" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseCategory">Category</label>
+                        <select id="expenseCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="medical">Medical Supplies</option>
+                            <option value="acupuncture">Acupuncture Supplies</option>
+                            <option value="diabetes">Diabetes Equipment</option>
+                            <option value="office">Office & Utilities</option>
+                            <option value="insurance">Insurance & Licenses</option>
+                            <option value="education">Education & Training</option>
+                            <option value="equipment">Medical Equipment</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseVendor">Vendor/Supplier</label>
+                        <input type="text" id="expenseVendor" placeholder="Company name" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="expenseDescription">Description</label>
+                        <input type="text" id="expenseDescription" placeholder="What was purchased" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="expensePaymentMethod">Payment Method</label>
+                        <select id="expensePaymentMethod" required>
+                            <option value="">Select Method</option>
+                            <option value="cash">Cash</option>
+                            <option value="card">Card</option>
+                            <option value="transfer">Bank Transfer</option>
+                            <option value="check">Check</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="expenseTax">Tax Deductible?</label>
+                        <select id="expenseTax">
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                            <option value="partial">Partial</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button class="btn-primary" onclick="addExpense()">Add Expense</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Expense Records</h2>
+                <button class="btn-export" onclick="exportExpenseCSV()">Export CSV</button>
+                <button class="btn-export" onclick="clearExpenses()">Clear All</button>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Vendor</th>
+                            <th>Amount</th>
+                            <th>Payment</th>
+                            <th>Tax Deductible</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expenseTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Fixed Expenses Tab -->
+        <div id="fixed-expenses" class="tab-content">
+            <div class="section">
+                <h2>Add Fixed Monthly Expense</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fixedExpenseName">Expense Name</label>
+                        <input type="text" id="fixedExpenseName" placeholder="e.g., Office Rent" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fixedExpenseAmount">Monthly Amount (€)</label>
+                        <input type="number" id="fixedExpenseAmount" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fixedExpenseCategory">Category</label>
+                        <select id="fixedExpenseCategory" required>
+                            <option value="">Select Category</option>
+                            <option value="rent">Rent & Utilities</option>
+                            <option value="insurance">Insurance Premiums</option>
+                            <option value="loan">Loan Payments</option>
+                            <option value="subscription">Subscriptions</option>
+                            <option value="salary">Salaries</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fixedExpenseDay">Due Day of Month</label>
+                        <input type="number" id="fixedExpenseDay" min="1" max="31" placeholder="1" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fixedExpenseVendor">Vendor/Provider</label>
+                        <input type="text" id="fixedExpenseVendor" placeholder="Company name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fixedExpensePaymentMethod">Payment Method</label>
+                        <select id="fixedExpensePaymentMethod" required>
+                            <option value="">Select Method</option>
+                            <option value="transfer">Bank Transfer</option>
+                            <option value="direct-debit">Direct Debit</option>
+                            <option value="cash">Cash</option>
+                            <option value="card">Card</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button class="btn-primary" onclick="addFixedExpense()">Add Fixed Expense</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Monthly Fixed Expenses</h2>
+                <button class="btn-export" onclick="generateFixedExpensesForMonth()">Generate This Month's Expenses</button>
+                <button class="btn-export" onclick="exportFixedExpenseCSV()">Export CSV</button>
+                
+                <div class="summary-cards" style="margin-bottom: 20px;">
+                    <div class="summary-card">
+                        <h3>Total Monthly Fixed</h3>
+                        <div class="amount expense" id="totalMonthlyFixed">€0.00</div>
+                        <div class="subtitle" id="fixedExpenseCount">0 items</div>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Generated This Month</h3>
+                        <div class="amount neutral" id="generatedThisMonth">€0.00</div>
+                        <div class="subtitle">Already created</div>
+                    </div>
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Amount</th>
+                            <th>Category</th>
+                            <th>Due Day</th>
+                            <th>Vendor</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fixedExpenseTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Receivables Tab -->
+        <div id="receivables" class="tab-content">
+            <div class="section">
+                <h2>Add Receivable (Money Others Owe You)</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="receivableDate">Date</label>
+                        <input type="date" id="receivableDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="receivableAmount">Amount (€)</label>
+                        <input type="number" id="receivableAmount" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="receivableDebtor">Debtor (Who Owes)</label>
+                        <input type="text" id="receivableDebtor" placeholder="Patient, Insurance, etc." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="receivableDueDate">Due Date</label>
+                        <input type="date" id="receivableDueDate" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="receivableType">Type</label>
+                        <select id="receivableType" required>
+                            <option value="">Select Type</option>
+                            <option value="patient">Patient Payment</option>
+                            <option value="insurance">Insurance</option>
+                            <option value="consultation">Consultation Fee</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="receivableNotes">Notes</label>
+                        <input type="text" id="receivableNotes" placeholder="Additional details">
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button class="btn-primary" onclick="addReceivable()">Add Receivable</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Outstanding Receivables</h2>
+                <button class="btn-export" onclick="exportReceivableCSV()">Export CSV</button>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Debtor</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="receivableTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Payables Tab -->
+        <div id="payables" class="tab-content">
+            <div class="section">
+                <h2>Add Payable (Money You Owe)</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="payableDate">Date</label>
+                        <input type="date" id="payableDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="payableAmount">Amount (€)</label>
+                        <input type="number" id="payableAmount" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="payableCreditor">Creditor (Who You Owe)</label>
+                        <input type="text" id="payableCreditor" placeholder="Supplier, landlord, etc." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="payableDueDate">Due Date</label>
+                        <input type="date" id="payableDueDate" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="payableType">Type</label>
+                        <select id="payableType" required>
+                            <option value="">Select Type</option>
+                            <option value="supplier">Supplier Invoice</option>
+                            <option value="rent">Rent/Utilities</option>
+                            <option value="equipment">Equipment</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="payableNotes">Notes</label>
+                        <input type="text" id="payableNotes" placeholder="Additional details">
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button class="btn-primary" onclick="addPayable()">Add Payable</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Outstanding Payables</h2>
+                <button class="btn-export" onclick="exportPayableCSV()">Export CSV</button>
+                
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Creditor</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Notes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="payableTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reports" class="tab-content">
+            <div class="section">
+                <h2>Financial Reports</h2>
+                <button class="btn-export" onclick="generateMonthlyReport()">Monthly Report</button>
+                <button class="btn-export" onclick="generateTaxReport()">Tax Report</button>
+                <button class="btn-export" onclick="generatePatientReport()">Patient Report</button>
+                
+                <div id="reportResults"></div>
+            </div>
+        </div>
+
+        <!-- Data Tab -->
+        <div id="data" class="tab-content">
+            <div class="section">
+                <h2>Data Management</h2>
+                <button class="btn-export" onclick="backupAllData()">Backup Data</button>
+                <button class="btn-export" onclick="document.getElementById('restoreFile').click()">Restore Data</button>
+                <button class="btn-export" onclick="clearAllData()" style="background: #dc3545;">Clear All Data</button>
+                <input type="file" id="restoreFile" accept=".json" onchange="restoreData(event)" style="display: none;">
+                
+                <div style="background: #fff3cd; padding: 20px; border-radius: 10px; margin-top: 20px; border: 1px solid #ffeaa7;">
+                    <h4 style="color: #856404; margin-bottom: 10px;">Data Management Tips</h4>
+                    <p><strong>Backup regularly:</strong> Your data is stored in your browser. Create backups weekly.</p>
+                    <p><strong>Export CSV:</strong> Use CSV exports for accounting software or spreadsheet analysis.</p>
+                    <p><strong>Restore:</strong> Upload a previous backup JSON file to restore your data.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        // Data storage
+        let incomeRecords = [];
+        let expenseRecords = [];
+        let receivableRecords = [];
+        let payableRecords = [];
+        let fixedExpenseRecords = [];
+        let recordId = 1;
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            setDefaultDates();
+            updateDashboard();
+            animateOnLoad();
+        });
+
+        function animateOnLoad() {
+            const cards = document.querySelectorAll('.summary-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+
+            const sections = document.querySelectorAll('.section');
+            sections.forEach((section, index) => {
+                section.style.animationDelay = `${index * 0.2}s`;
+            });
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function showModal(content) {
+            const modal = document.getElementById('modal');
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = content;
+            modal.classList.add('show');
+            
+            modal.onclick = (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+            };
+        }
+
+        function addLoadingState(button) {
+            button.classList.add('loading');
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.classList.remove('loading');
+                button.disabled = false;
+            }, 1000);
+        }
+
+        function setDefaultDates() {
+            const today = new Date().toISOString().split('T')[0];
+            const nextMonth = new Date();
+            nextMonth.setMonth(nextMonth.getMonth() + 1);
+            const nextMonthStr = nextMonth.toISOString().split('T')[0];
+
+            document.getElementById('incomeDate').value = today;
+            document.getElementById('expenseDate').value = today;
+            document.getElementById('receivableDate').value = today;
+            document.getElementById('payableDate').value = today;
+            document.getElementById('receivableDueDate').value = nextMonthStr;
+            document.getElementById('payableDueDate').value = nextMonthStr;
+            document.getElementById('fixedExpenseDay').value = '1';
+        }
+
+        // Tab management with animations
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const navTabs = document.querySelectorAll('.nav-tab');
+            
+            // Remove active classes
+            tabs.forEach(tab => tab.classList.remove('active'));
+            navTabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Add active classes
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Trigger animations
+            const activeTab = document.getElementById(tabName);
+            activeTab.classList.add('fade-enter');
+            
+            if (tabName === 'dashboard') {
+                updateDashboard();
+            }
+        }
+
+        // Income functions with animations
+        function addIncome() {
+            const button = event.target;
+            addLoadingState(button);
+
+            const date = document.getElementById('incomeDate').value;
+            const amount = parseFloat(document.getElementById('incomeAmount').value);
+            const service = document.getElementById('incomeService').value;
+            const payment = document.getElementById('paymentType').value;
+            const patient = document.getElementById('patientRef').value;
+            const notes = document.getElementById('incomeNotes').value;
+
+            if (!date || !amount || !service || !payment) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+
+            const record = {
+                id: recordId++,
+                date: date,
+                amount: amount,
+                service: service,
+                payment: payment,
+                patient: patient,
+                notes: notes
+            };
+
+            incomeRecords.push(record);
+            updateIncomeTable();
+            updateDashboard();
+            saveData();
+            clearIncomeForm();
+            showNotification('Income added successfully!');
+        }
+
+        function clearIncomeForm() {
+            document.getElementById('incomeAmount').value = '';
+            document.getElementById('incomeService').value = '';
+            document.getElementById('paymentType').value = '';
+            document.getElementById('patientRef').value = '';
+            document.getElementById('incomeNotes').value = '';
+            setDefaultDates();
+        }
+
+        function updateIncomeTable() {
+            const tbody = document.getElementById('incomeTableBody');
+            tbody.innerHTML = '';
+
+            incomeRecords.forEach((record, index) => {
+                const row = document.createElement('tr');
+                row.style.animationDelay = `${index * 0.05}s`;
+                row.classList.add('slide-up');
+                row.innerHTML = `
+                    <td>${formatDate(record.date)}</td>
+                    <td>${getServiceName(record.service)}</td>
+                    <td>€${record.amount.toFixed(2)}</td>
+                    <td>${record.payment}</td>
+                    <td>${record.patient || '-'}</td>
+                    <td>${record.notes || '-'}</td>
+                    <td><button class="delete-btn" onclick="deleteIncome(${record.id})">Delete</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function deleteIncome(id) {
+            showModal(`
+                <h3>Confirm Deletion</h3>
+                <p>Delete this income record?</p>
+                <button class="btn-primary" onclick="confirmDeleteIncome(${id})">Yes, Delete</button>
+                <button class="btn-export" onclick="document.getElementById('modal').classList.remove('show')">Cancel</button>
+            `);
+        }
+
+        function confirmDeleteIncome(id) {
+            incomeRecords = incomeRecords.filter(record => record.id !== id);
+            updateIncomeTable();
+            updateDashboard();
+            saveData();
+            document.getElementById('modal').classList.remove('show');
+            showNotification('Income record deleted');
+        }
+
+        // Expense functions with animations
+        function addExpense() {
+            const button = event.target;
+            addLoadingState(button);
+
+            const date = document.getElementById('expenseDate').value;
+            const amount = parseFloat(document.getElementById('expenseAmount').value);
+            const category = document.getElementById('expenseCategory').value;
+            const vendor = document.getElementById('expenseVendor').value;
+            const description = document.getElementById('expenseDescription').value;
+            const payment = document.getElementById('expensePaymentMethod').value;
+            const tax = document.getElementById('expenseTax').value;
+
+            if (!date || !amount || !category || !vendor || !description || !payment) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+
+            const record = {
+                id: recordId++,
+                date: date,
+                amount: amount,
+                category: category,
+                vendor: vendor,
+                description: description,
+                payment: payment,
+                tax: tax
+            };
+
+            expenseRecords.push(record);
+            updateExpenseTable();
+            updateDashboard();
+            saveData();
+            clearExpenseForm();
+            showNotification('Expense added successfully!');
+        }
+
+        function clearExpenseForm() {
+            document.getElementById('expenseAmount').value = '';
+            document.getElementById('expenseCategory').value = '';
+            document.getElementById('expenseVendor').value = '';
+            document.getElementById('expenseDescription').value = '';
+            document.getElementById('expensePaymentMethod').value = '';
+            document.getElementById('expenseTax').value = 'yes';
+            setDefaultDates();
+        }
+
+        function updateExpenseTable() {
+            const tbody = document.getElementById('expenseTableBody');
+            tbody.innerHTML = '';
+
+            expenseRecords.forEach((record, index) => {
+                const row = document.createElement('tr');
+                row.style.animationDelay = `${index * 0.05}s`;
+                row.classList.add('slide-up');
+                row.innerHTML = `
+                    <td>${formatDate(record.date)}</td>
+                    <td>${getCategoryName(record.category)}</td>
+                    <td>${record.description}</td>
+                    <td>${record.vendor}</td>
+                    <td>€${record.amount.toFixed(2)}</td>
+                    <td>${record.payment}</td>
+                    <td>${record.tax}</td>
+                    <td><button class="delete-btn" onclick="deleteExpense(${record.id})">Delete</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function deleteExpense(id) {
+            showModal(`
+                <h3>Confirm Deletion</h3>
+                <p>Delete this expense record?</p>
+                <button class="btn-primary" onclick="confirmDeleteExpense(${id})">Yes, Delete</button>
+                <button class="btn-export" onclick="document.getElementById('modal').classList.remove('show')">Cancel</button>
+            `);
+        }
+
+        function confirmDeleteExpense(id) {
+            expenseRecords = expenseRecords.filter(record => record.id !== id);
+            updateExpenseTable();
+            updateDashboard();
+            saveData();
+            document.getElementById('modal').classList.remove('show');
+            showNotification('Expense record deleted');
+        }
+
+        // Fixed expense functions
+        function addFixedExpense() {
+            const button = event.target;
+            addLoadingState(button);
+
+            const name = document.getElementById('fixedExpenseName').value;
+            const amount = parseFloat(document.getElementById('fixedExpenseAmount').value);
+            const category = document.getElementById('fixedExpenseCategory').value;
+            const day = parseInt(document.getElementById('fixedExpenseDay').value);
+            const vendor = document.getElementById('fixedExpenseVendor').value;
+            const payment = document.getElementById('fixedExpensePaymentMethod').value;
+
+            if (!name || !amount || !category || !day || !vendor || !payment) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+
+            const record = {
+                id: recordId++,
+                name: name,
+                amount: amount,
+                category: category,
+                day: day,
+                vendor: vendor,
+                payment: payment,
+                isActive: true
+            };
+
+            fixedExpenseRecords.push(record);
+            updateFixedExpenseTable();
+            updateDashboard();
+            saveData();
+            clearFixedExpenseForm();
+            showNotification('Fixed expense added successfully!');
+        }
+
+        function clearFixedExpenseForm() {
+            document.getElementById('fixedExpenseName').value = '';
+            document.getElementById('fixedExpenseAmount').value = '';
+            document.getElementById('fixedExpenseCategory').value = '';
+            document.getElementById('fixedExpenseDay').value = '1';
+            document.getElementById('fixedExpenseVendor').value = '';
+            document.getElementById('fixedExpensePaymentMethod').value = '';
+        }
+
+        function updateFixedExpenseTable() {
+            const tbody = document.getElementById('fixedExpenseTableBody');
+            tbody.innerHTML = '';
+
+            let totalFixed = 0;
+            let activeCount = 0;
+
+            fixedExpenseRecords.forEach((record, index) => {
+                if (record.isActive) {
+                    totalFixed += record.amount;
+                    activeCount++;
+                }
+
+                const status = getFixedExpenseStatus(record);
+                const row = document.createElement('tr');
+                row.style.animationDelay = `${index * 0.05}s`;
+                row.classList.add('slide-up');
+                row.innerHTML = `
+                    <td><strong>${record.name}</strong></td>
+                    <td>€${record.amount.toFixed(2)}</td>
+                    <td>${record.category}</td>
+                    <td>${record.day}</td>
+                    <td>${record.vendor}</td>
+                    <td><span class="status-${status}">${status.toUpperCase()}</span></td>
+                    <td>
+                        <button class="btn-small" onclick="generateSingleFixedExpense(${record.id})">Generate</button>
+                        <button class="btn-small" onclick="toggleFixedExpense(${record.id})">${record.isActive ? 'Pause' : 'Activate'}</button>
+                        <button class="delete-btn" onclick="deleteFixedExpense(${record.id})">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            animateValue('totalMonthlyFixed', totalFixed, '€');
+            document.getElementById('fixedExpenseCount').textContent = `${activeCount} items`;
+            updateGeneratedThisMonth();
+        }
+
+        function animateValue(elementId, value, prefix = '') {
+            const element = document.getElementById(elementId);
+            const startValue = 0;
+            const duration = 1000;
+            const startTime = performance.now();
+
+            function updateValue(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+                const currentValue = startValue + (value - startValue) * easeOutCubic;
+                element.textContent = `${prefix}${currentValue.toFixed(2)}`;
+
+                if (progress < 1) {
+                    requestAnimationFrame(updateValue);
+                }
+            }
+
+            requestAnimationFrame(updateValue);
+        }
+
+        function getFixedExpenseStatus(record) {
+            if (!record.isActive) return 'inactive';
+            
+            const currentMonth = new Date().toISOString().substring(0, 7);
+            const alreadyGenerated = expenseRecords.some(expense => 
+                expense.description && 
+                expense.description.includes(`Fixed: ${record.name}`) &&
+                expense.date.startsWith(currentMonth)
+            );
+            
+            return alreadyGenerated ? 'generated' : 'pending';
+        }
+
+        function generateSingleFixedExpense(id) {
+            const fixedExpense = fixedExpenseRecords.find(f => f.id === id);
+            if (!fixedExpense) return;
+            
+            const currentMonth = new Date().toISOString().substring(0, 7);
+            
+            const alreadyGenerated = expenseRecords.some(expense => 
+                expense.description && 
+                expense.description.includes(`Fixed: ${fixedExpense.name}`) &&
+                expense.date.startsWith(currentMonth)
+            );
+            
+            if (alreadyGenerated) {
+                showNotification('This fixed expense has already been generated for this month!', 'error');
+                return;
+            }
+            
+            const expenseEntry = {
+                id: recordId++,
+                date: new Date().toISOString().split('T')[0],
+                amount: fixedExpense.amount,
+                category: fixedExpense.category === 'rent' ? 'office' : fixedExpense.category,
+                vendor: fixedExpense.vendor,
+                description: `Fixed: ${fixedExpense.name}`,
+                payment: fixedExpense.payment,
+                tax: 'yes'
+            };
+            
+            expenseRecords.push(expenseEntry);
+            updateExpenseTable();
+            updateFixedExpenseTable();
+            updateDashboard();
+            saveData();
+            showNotification('Fixed expense generated and added to expenses!');
+        }
+
+        function generateFixedExpensesForMonth() {
+            const button = event.target;
+            addLoadingState(button);
+
+            const currentMonth = new Date().toISOString().substring(0, 7);
+            let generatedCount = 0;
+            let alreadyExistCount = 0;
+            
+            fixedExpenseRecords.forEach(fixedExpense => {
+                if (!fixedExpense.isActive) return;
+                
+                const alreadyGenerated = expenseRecords.some(expense => 
+                    expense.description && 
+                    expense.description.includes(`Fixed: ${fixedExpense.name}`) &&
+                    expense.date.startsWith(currentMonth)
+                );
+                
+                if (alreadyGenerated) {
+                    alreadyExistCount++;
+                    return;
+                }
+                
+                const expenseEntry = {
+                    id: recordId++,
+                    date: new Date().toISOString().split('T')[0],
+                    amount: fixedExpense.amount,
+                    category: fixedExpense.category === 'rent' ? 'office' : fixedExpense.category,
+                    vendor: fixedExpense.vendor,
+                    description: `Fixed: ${fixedExpense.name}`,
+                    payment: fixedExpense.payment,
+                    tax: 'yes'
+                };
+                
+                expenseRecords.push(expenseEntry);
+                generatedCount++;
+            });
+            
+            updateExpenseTable();
+            updateFixedExpenseTable();
+            updateDashboard();
+            saveData();
+            
+            let message = `Generated ${generatedCount} fixed expenses for this month.`;
+            if (alreadyExistCount > 0) {
+                message += ` ${alreadyExistCount} expenses were already generated.`;
+            }
+            showNotification(message);
+        }
+
+        function toggleFixedExpense(id) {
+            const fixedExpense = fixedExpenseRecords.find(f => f.id === id);
+            if (fixedExpense) {
+                fixedExpense.isActive = !fixedExpense.isActive;
+                updateFixedExpenseTable();
+                updateDashboard();
+                saveData();
+                showNotification(`Fixed expense ${fixedExpense.isActive ? 'activated' : 'paused'}`);
+            }
+        }
+
+        function deleteFixedExpense(id) {
+            showModal(`
+                <h3>Confirm Deletion</h3>
+                <p>Delete this fixed expense?</p>
+                <button class="btn-primary" onclick="confirmDeleteFixedExpense(${id})">Yes, Delete</button>
+                <button class="btn-export" onclick="document.getElementById('modal').classList.remove('show')">Cancel</button>
+            `);
+        }
+
+        function confirmDeleteFixedExpense(id) {
+            fixedExpenseRecords = fixedExpenseRecords.filter(record => record.id !== id);
+            updateFixedExpenseTable();
+            updateDashboard();
+            saveData();
+            document.getElementById('modal').classList.remove('show');
+            showNotification('Fixed expense deleted');
+        }
+
+        function updateGeneratedThisMonth() {
+            const currentMonth = new Date().toISOString().substring(0, 7);
+            const generatedThisMonth = expenseRecords
+                .filter(expense => 
+                    expense.date.startsWith(currentMonth) &&
+                    expense.description && 
+                    expense.description.includes('Fixed:')
+                )
+                .reduce((sum, expense) => sum + expense.amount, 0);
+            
+            animateValue('generatedThisMonth', generatedThisMonth, '€');
+        }
+
+        // Receivable functions
+        function addReceivable() {
+            const button = event.target;
+            addLoadingState(button);
+
+            const date = document.getElementById('receivableDate').value;
+            const amount = parseFloat(document.getElementById('receivableAmount').value);
+            const debtor = document.getElementById('receivableDebtor').value;
+            const dueDate = document.getElementById('receivableDueDate').value;
+            const type = document.getElementById('receivableType').value;
+            const notes = document.getElementById('receivableNotes').value;
+
+            if (!date || !amount || !debtor || !dueDate || !type) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+
+            const record = {
+                id: recordId++,
+                date: date,
+                amount: amount,
+                debtor: debtor,
+                dueDate: dueDate,
+                type: type,
+                notes: notes,
+                status: 'current'
+            };
+
+            receivableRecords.push(record);
+            updateReceivableTable();
+            updateDashboard();
+            saveData();
+            clearReceivableForm();
+            showNotification('Receivable added successfully!');
+        }
+
+        function clearReceivableForm() {
+            document.getElementById('receivableAmount').value = '';
+            document.getElementById('receivableDebtor').value = '';
+            document.getElementById('receivableType').value = '';
+            document.getElementById('receivableNotes').value = '';
+            setDefaultDates();
+        }
+
+        function updateReceivableTable() {
+            const tbody = document.getElementById('receivableTableBody');
+            tbody.innerHTML = '';
+
+            receivableRecords.forEach((record, index) => {
+                const status = getReceivableStatus(record);
+                const row = document.createElement('tr');
+                row.style.animationDelay = `${index * 0.05}s`;
+                row.classList.add('slide-up');
+                row.innerHTML = `
+                    <td>${formatDate(record.date)}</td>
+                    <td>${record.debtor}</td>
+                    <td>${record.type}</td>
+                    <td>€${record.amount.toFixed(2)}</td>
+                    <td>${formatDate(record.dueDate)}</td>
+                    <td><span class="status-${status}">${status.toUpperCase()}</span></td>
+                    <td>${record.notes || '-'}</td>
+                    <td>
+                        <button class="btn-small" onclick="markReceivableAsPaid(${record.id})">Mark Paid</button>
+                        <button class="delete-btn" onclick="deleteReceivable(${record.id})">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function markReceivableAsPaid(id) {
+            const record = receivableRecords.find(r => r.id === id);
+            if (record && record.status !== 'paid') {
+                record.status = 'paid';
+                
+                // Add to income records
+                const incomeEntry = {
+                    id: recordId++,
+                    date: new Date().toISOString().split('T')[0],
+                    amount: record.amount,
+                    service: record.type,
+                    payment: 'receivable-payment',
+                    patient: record.debtor,
+                    notes: `Payment received: ${record.notes || 'Receivable'}`
+                };
+                
+                incomeRecords.push(incomeEntry);
+                updateIncomeTable();
+                updateReceivableTable();
+                updateDashboard();
+                saveData();
+                showNotification('Marked as paid and added to income!');
+            }
+        }
+
+        function deleteReceivable(id) {
+            showModal(`
+                <h3>Confirm Deletion</h3>
+                <p>Delete this receivable?</p>
+                <button class="btn-primary" onclick="confirmDeleteReceivable(${id})">Yes, Delete</button>
+                <button class="btn-export" onclick="document.getElementById('modal').classList.remove('show')">Cancel</button>
+            `);
+        }
+
+        function confirmDeleteReceivable(id) {
+            receivableRecords = receivableRecords.filter(record => record.id !== id);
+            updateReceivableTable();
+            updateDashboard();
+            saveData();
+            document.getElementById('modal').classList.remove('show');
+            showNotification('Receivable deleted');
+        }
+
+        // Payable functions
+        function addPayable() {
+            const button = event.target;
+            addLoadingState(button);
+
+            const date = document.getElementById('payableDate').value;
+            const amount = parseFloat(document.getElementById('payableAmount').value);
+            const creditor = document.getElementById('payableCreditor').value;
+            const dueDate = document.getElementById('payableDueDate').value;
+            const type = document.getElementById('payableType').value;
+            const notes = document.getElementById('payableNotes').value;
+
+            if (!date || !amount || !creditor || !dueDate || !type) {
+                showNotification('Please fill in all required fields', 'error');
+                return;
+            }
+
+            const record = {
+                id: recordId++,
+                date: date,
+                amount: amount,
+                creditor: creditor,
+                dueDate: dueDate,
+                type: type,
+                notes: notes,
+                status: 'current'
+            };
+
+            payableRecords.push(record);
+            updatePayableTable();
+            updateDashboard();
+            saveData();
+            clearPayableForm();
+            showNotification('Payable added successfully!');
+        }
+
+        function clearPayableForm() {
+            document.getElementById('payableAmount').value = '';
+            document.getElementById('payableCreditor').value = '';
+            document.getElementById('payableType').value = '';
+            document.getElementById('payableNotes').value = '';
+            setDefaultDates();
+        }
+
+        function updatePayableTable() {
+            const tbody = document.getElementById('payableTableBody');
+            tbody.innerHTML = '';
+
+            payableRecords.forEach((record, index) => {
+                const status = getPayableStatus(record);
+                const row = document.createElement('tr');
+                row.style.animationDelay = `${index * 0.05}s`;
+                row.classList.add('slide-up');
+                row.innerHTML = `
+                    <td>${formatDate(record.date)}</td>
+                    <td>${record.creditor}</td>
+                    <td>${record.type}</td>
+                    <td>€${record.amount.toFixed(2)}</td>
+                    <td>${formatDate(record.dueDate)}</td>
+                    <td><span class="status-${status}">${status.toUpperCase()}</span></td>
+                    <td>${record.notes || '-'}</td>
+                    <td>
+                        <button class="btn-small" onclick="markPayableAsPaid(${record.id})">Mark Paid</button>
+                        <button class="delete-btn" onclick="deletePayable(${record.id})">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function markPayableAsPaid(id) {
+            const record = payableRecords.find(r => r.id === id);
+            if (record && record.status !== 'paid') {
+                record.status = 'paid';
+                
+                // Add to expense records
+                const expenseEntry = {
+                    id: recordId++,
+                    date: new Date().toISOString().split('T')[0],
+                    amount: record.amount,
+                    category: record.type === 'supplier' ? 'medical' : 'office',
+                    vendor: record.creditor,
+                    description: `Payment: ${record.notes || 'Payable'}`,
+                    payment: 'payable-payment',
+                    tax: 'yes'
+                };
+                
+                expenseRecords.push(expenseEntry);
+                updateExpenseTable();
+                updatePayableTable();
+                updateDashboard();
+                saveData();
+                showNotification('Marked as paid and added to expenses!');
+            }
+        }
+
+        function deletePayable(id) {
+            showModal(`
+                <h3>Confirm Deletion</h3>
+                <p>Delete this payable?</p>
+                <button class="btn-primary" onclick="confirmDeletePayable(${id})">Yes, Delete</button>
+                <button class="btn-export" onclick="document.getElementById('modal').classList.remove('show')">Cancel</button>
+            `);
+        }
+
+        function confirmDeletePayable(id) {
+            payableRecords = payableRecords.filter(record => record.id !== id);
+            updatePayableTable();
+            updateDashboard();
+            saveData();
+            document.getElementById('modal').classList.remove('show');
+            showNotification('Payable deleted');
+        }
+
+        // Status functions
+        function getReceivableStatus(receivable) {
+            if (receivable.status === 'paid') return 'paid';
+            const today = new Date();
+            const dueDate = new Date(receivable.dueDate);
+            return dueDate < today ? 'overdue' : 'current';
+        }
+
+        function getPayableStatus(payable) {
+            if (payable.status === 'paid') return 'paid';
+            const today = new Date();
+            const dueDate = new Date(payable.dueDate);
+            return dueDate < today ? 'overdue' : 'current';
+        }
+
+        // Dashboard updates with animations
+        function updateDashboard() {
+            const currentMonth = new Date().toISOString().substring(0, 7);
+            
+            // Calculate monthly totals
+            const monthlyIncome = incomeRecords
+                .filter(record => record.date.startsWith(currentMonth))
+                .reduce((sum, record) => sum + record.amount, 0);
+            
+            const monthlyExpenses = expenseRecords
+                .filter(record => record.date.startsWith(currentMonth))
+                .reduce((sum, record) => sum + record.amount, 0);
+            
+            const monthlyProfit = monthlyIncome - monthlyExpenses;
+            
+            const totalReceivables = receivableRecords
+                .filter(record => record.status !== 'paid')
+                .reduce((sum, record) => sum + record.amount, 0);
+            
+            const totalPayables = payableRecords
+                .filter(record => record.status !== 'paid')
+                .reduce((sum, record) => sum + record.amount, 0);
+
+            const fixedExpensesDue = calculateFixedExpensesDue();
+
+            // Animate dashboard values
+            animateValue('monthlyIncome', monthlyIncome, '€');
+            animateValue('monthlyExpenses', monthlyExpenses, '€');
+            animateValue('monthlyProfit', monthlyProfit, '€');
+            animateValue('totalReceivables', totalReceivables, '€');
+            animateValue('totalPayables', totalPayables, '€');
+            animateValue('fixedExpensesDue', fixedExpensesDue, '€');
+
+            // Update service breakdown
+            const serviceIncome = calculateServiceIncome(currentMonth);
+            animateValue('internalMedicineIncome', serviceIncome.internal, '€');
+            animateValue('acupunctureIncome', serviceIncome.acupuncture, '€');
+            animateValue('diabetologyIncome', serviceIncome.diabetes, '€');
+
+            // Update patient count
+            const uniquePatients = getUniquePatients(currentMonth);
+            animateValue('monthlyPatients', uniquePatients);
+        }
+
+        function calculateFixedExpensesDue() {
+            const currentMonth = new Date().toISOString().substring(0, 7);
+            
+            return fixedExpenseRecords
+                .filter(expense => {
+                    if (!expense.isActive) return false;
+                    
+                    const alreadyGenerated = expenseRecords.some(exp => 
+                        exp.description && 
+                        exp.description.includes(`Fixed: ${expense.name}`) &&
+                        exp.date.startsWith(currentMonth)
+                    );
+                    
+                    return !alreadyGenerated;
+                })
+                .reduce((sum, expense) => sum + expense.amount, 0);
+        }
+
+        function calculateServiceIncome(month) {
+            const monthlyRecords = incomeRecords.filter(record => record.date.startsWith(month));
+            return {
+                internal: monthlyRecords.filter(r => r.service === 'internal').reduce((sum, r) => sum + r.amount, 0),
+                acupuncture: monthlyRecords.filter(r => r.service === 'acupuncture').reduce((sum, r) => sum + r.amount, 0),
+                diabetes: monthlyRecords.filter(r => r.service === 'diabetes').reduce((sum, r) => sum + r.amount, 0)
+            };
+        }
+
+        function getUniquePatients(month) {
+            const monthlyRecords = incomeRecords.filter(record => 
+                record.date.startsWith(month) && record.patient && record.patient.trim()
+            );
+            const uniquePatients = new Set(monthlyRecords.map(r => r.patient.toLowerCase().trim()));
+            return uniquePatients.size;
+        }
+
+        // Helper functions
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-GB');
+        }
+
+        function getServiceName(service) {
+            const services = {
+                'internal': 'Internal Medicine',
+                'acupuncture': 'Acupuncture',
+                'diabetes': 'Diabetology',
+                'consultation': 'General Consultation',
+                'procedure': 'Medical Procedure'
+            };
+            return services[service] || service;
+        }
+
+        function getCategoryName(category) {
+            const categories = {
+                'medical': 'Medical Supplies',
+                'acupuncture': 'Acupuncture Supplies',
+                'diabetes': 'Diabetes Equipment',
+                'office': 'Office & Utilities',
+                'insurance': 'Insurance & Licenses',
+                'education': 'Education & Training',
+                'equipment': 'Medical Equipment',
+                'other': 'Other'
+            };
+            return categories[category] || category;
+        }
+
+        // Export functions
+        function exportIncomeCSV() {
+            if (incomeRecords.length === 0) {
+                showNotification('No income records to export', 'error');
+                return;
+            }
+            exportToCSV(incomeRecords, 'income', ['Date', 'Service', 'Amount', 'Payment', 'Patient', 'Notes']);
+            showNotification('Income CSV exported successfully!');
+        }
+
+        function exportExpenseCSV() {
+            if (expenseRecords.length === 0) {
+                showNotification('No expense records to export', 'error');
+                return;
+            }
+            exportToCSV(expenseRecords, 'expenses', ['Date', 'Category', 'Description', 'Vendor', 'Amount', 'Payment', 'Tax Deductible']);
+            showNotification('Expense CSV exported successfully!');
+        }
+
+        function exportFixedExpenseCSV() {
+            if (fixedExpenseRecords.length === 0) {
+                showNotification('No fixed expenses to export', 'error');
+                return;
+            }
+            exportToCSV(fixedExpenseRecords, 'fixed-expenses', ['Name', 'Amount', 'Category', 'Due Day', 'Vendor', 'Payment Method', 'Active']);
+            showNotification('Fixed expenses CSV exported successfully!');
+        }
+
+        function exportReceivableCSV() {
+            if (receivableRecords.length === 0) {
+                showNotification('No receivables to export', 'error');
+                return;
+            }
+            exportToCSV(receivableRecords, 'receivables', ['Date', 'Debtor', 'Type', 'Amount', 'Due Date', 'Status', 'Notes']);
+            showNotification('Receivables CSV exported successfully!');
+        }
+
+        function exportPayableCSV() {
+            if (payableRecords.length === 0) {
+                showNotification('No payables to export', 'error');
+                return;
+            }
+            exportToCSV(payableRecords, 'payables', ['Date', 'Creditor', 'Type', 'Amount', 'Due Date', 'Status', 'Notes']);
+            showNotification('Payables CSV exported successfully!');
+        }
+
+        function exportToCSV(data, filename, headers) {
+            const csvContent = [
+                headers.join(','),
+                ...data.map(record => {
+                    return Object.values(record).map(value => {
+                        if (typeof value === 'string' && value.includes(',')) {
+                            return `"${value}"`;
+                        }
+                        return value;
+                    }).join(',');
+                })
+            ].join('\n');
+
+            downloadCSV(csvContent, `${filename}-${new Date().toISOString().split('T')[0]}.csv`);
+        }
+
+        function downloadCSV(content, filename) {
+            const blob = new Blob([content], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Report generation with animations
+        function generateMonthlyReport() {
+            const button = event.target;
+            addLoadingState(button);
+
+            const currentMonth = new Date().toISOString().substring(0, 7);
+            const monthName = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long' });
+            
+            const monthlyIncome = incomeRecords
+                .filter(record => record.date.startsWith(currentMonth))
+                .reduce((sum, record) => sum + record.amount, 0);
+            
+            const monthlyExpenses = expenseRecords
+                .filter(record => record.date.startsWith(currentMonth))
+                .reduce((sum, record) => sum + record.amount, 0);
+            
+            const profit = monthlyIncome - monthlyExpenses;
+            const margin = monthlyIncome > 0 ? (profit / monthlyIncome * 100) : 0;
+
+            document.getElementById('reportResults').innerHTML = `
+                <div class="section bounce-in">
+                    <h2>Monthly Report - ${monthName}</h2>
+                    <div class="summary-cards">
+                        <div class="summary-card">
+                            <h3>Total Income</h3>
+                            <div class="amount income">€${monthlyIncome.toFixed(2)}</div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Total Expenses</h3>
+                            <div class="amount expense">€${monthlyExpenses.toFixed(2)}</div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Net Profit</h3>
+                            <div class="amount ${profit >= 0 ? 'profit' : 'expense'}">€${profit.toFixed(2)}</div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Profit Margin</h3>
+                            <div class="amount neutral">${margin.toFixed(1)}%</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            showNotification('Monthly report generated!');
+        }
+
+        function generateTaxReport() {
+            const button = event.target;
+            addLoadingState(button);
+
+            const currentYear = new Date().getFullYear();
+            const taxDeductible = expenseRecords.filter(record => 
+                record.date.startsWith(currentYear.toString()) && 
+                (record.tax === 'yes' || record.tax === 'partial')
+            );
+            
+            const totalDeductible = taxDeductible.reduce((sum, record) => sum + record.amount, 0);
+
+            document.getElementById('reportResults').innerHTML = `
+                <div class="section bounce-in">
+                    <h2>Tax Deductible Expenses - ${currentYear}</h2>
+                    <div class="summary-cards">
+                        <div class="summary-card">
+                            <h3>Total Deductible</h3>
+                            <div class="amount income">€${totalDeductible.toFixed(2)}</div>
+                            <div class="subtitle">${taxDeductible.length} items</div>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Amount</th>
+                                <th>Deductible</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${taxDeductible.map(record => `
+                                <tr>
+                                    <td>${formatDate(record.date)}</td>
+                                    <td>${getCategoryName(record.category)}</td>
+                                    <td>${record.description}</td>
+                                    <td>€${record.amount.toFixed(2)}</td>
+                                    <td>${record.tax}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            showNotification('Tax report generated!');
+        }
+
+        function generatePatientReport() {
+            const button = event.target;
+            addLoadingState(button);
+
+            const currentMonth = new Date().toISOString().substring(0, 7);
+            const monthName = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: 'long' });
+            const monthlyRecords = incomeRecords.filter(record => 
+                record.date.startsWith(currentMonth) && record.patient && record.patient.trim()
+            );
+            
+            const patientStats = {};
+            monthlyRecords.forEach(record => {
+                const patient = record.patient.toLowerCase().trim();
+                if (!patientStats[patient]) {
+                    patientStats[patient] = { visits: 0, revenue: 0, services: [] };
+                }
+                patientStats[patient].visits++;
+                patientStats[patient].revenue += record.amount;
+                patientStats[patient].services.push(getServiceName(record.service));
+            });
+
+            const totalRevenue = monthlyRecords.reduce((sum, r) => sum + r.amount, 0);
+            const avgRevenue = Object.keys(patientStats).length > 0 ? 
+                totalRevenue / Object.keys(patientStats).length : 0;
+
+            document.getElementById('reportResults').innerHTML = `
+                <div class="section bounce-in">
+                    <h2>Patient Report - ${monthName}</h2>
+                    <div class="summary-cards">
+                        <div class="summary-card">
+                            <h3>Unique Patients</h3>
+                            <div class="amount neutral">${Object.keys(patientStats).length}</div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Total Visits</h3>
+                            <div class="amount neutral">${monthlyRecords.length}</div>
+                        </div>
+                        <div class="summary-card">
+                            <h3>Avg Revenue/Patient</h3>
+                            <div class="amount income">€${avgRevenue.toFixed(2)}</div>
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Visits</th>
+                                <th>Revenue</th>
+                                <th>Services</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Object.entries(patientStats)
+                                .sort((a, b) => b[1].revenue - a[1].revenue)
+                                .map(([patient, stats]) => `
+                                <tr>
+                                    <td>${patient.toUpperCase()}</td>
+                                    <td>${stats.visits}</td>
+                                    <td>€${stats.revenue.toFixed(2)}</td>
+                                    <td>${[...new Set(stats.services)].join(', ')}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            showNotification('Patient report generated!');
+        }
+
+        // Data management with notifications
+        function clearIncome() {
+            showModal(`
+                <h3>Clear All Income Records</h3>
+                <p>This will permanently delete all income records. This cannot be undone!</p>
+                <button class="btn-primary" onclick="confirmClearIncome()">Yes, Clear All</button>
+                <button class="btn-export" onclick="document.getElementById('modal').classList.remove('show')">Cancel</button>
+            `);
+        }
+
+        function confirmClearIncome() {
+            incomeRecords = [];
+            updateIncomeTable();
+            updateDashboard();
+            saveData();
+            document.getElementById('modal').classList.remove('show');
+            showNotification('All income records cleared');
+        }
+
+        function clearExpenses() {
+            showModal(`
+                <h3>Clear All Expense Records</h3>
+                <p>This will permanently delete all expense records. This cannot be undone!</p>
+                <button class="btn-primary" onclick="confirmClearExpenses()">Yes, Clear All</button>
+                <button class="btn-export" onclick="document.getElementById('modal').classList.remove('show')">Cancel</button>
+            `);
+        }
+
+        function confirmClearExpenses() {
+            expenseRecords = [];
+            updateExpenseTable();
+            updateDashboard();
+            saveData();
+            document.getElementById('modal').classList.remove('show');
+            showNotification('All expense records cleared');
+        }
+
+        function clearAllData() {
+            showModal(`
+                <h3>Clear All Data</h3>
+                <p><strong>WARNING:</strong> This will permanently delete ALL data including income, expenses, receivables, payables, and fixed expenses. This cannot be undone!</p>
+                <button class="btn-primary" onclick="confirmClearAllData()">Yes, Delete Everything</button>
+                <button class="btn-export" onclick="document.getElementById('modal').classList.remove('show')">Cancel</button>
+            `);
+        }
+
+        function confirmClearAllData() {
+            incomeRecords = [];
+            expenseRecords = [];
+            receivableRecords = [];
+            payableRecords = [];
+            fixedExpenseRecords = [];
+            recordId = 1;
+            
+            updateIncomeTable();
+            updateExpenseTable();
+            updateReceivableTable();
+            updatePayableTable();
+            updateFixedExpenseTable();
+            updateDashboard();
+            saveData();
+            
+            document.getElementById('reportResults').innerHTML = '';
+            document.getElementById('modal').classList.remove('show');
+            showNotification('All data cleared');
+        }
+
+        // Data persistence
+        function saveData() {
+            const data = {
+                incomeRecords,
+                expenseRecords,
+                receivableRecords,
+                payableRecords,
+                fixedExpenseRecords,
+                recordId
+            };
+            window.medicalData = data;
+        }
+
+        function loadData() {
+            if (window.medicalData) {
+                const data = window.medicalData;
+                incomeRecords = data.incomeRecords || [];
+                expenseRecords = data.expenseRecords || [];
+                receivableRecords = data.receivableRecords || [];
+                payableRecords = data.payableRecords || [];
+                fixedExpenseRecords = data.fixedExpenseRecords || [];
+                recordId = data.recordId || 1;
+                
+                updateIncomeTable();
+                updateExpenseTable();
+                updateReceivableTable();
+                updatePayableTable();
+                updateFixedExpenseTable();
+                updateDashboard();
+            }
+        }
+
+        function backupAllData() {
+            const button = event.target;
+            addLoadingState(button);
+
+            const data = {
+                incomeRecords,
+                expenseRecords,
+                receivableRecords,
+                payableRecords,
+                fixedExpenseRecords,
+                recordId,
+                exportDate: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `medical-practice-backup-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+            
+            showNotification('Backup file downloaded successfully!');
+        }
+
+        function restoreData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    showModal(`
+                        <h3>Restore Data</h3>
+                        <p>This will replace all current data with the backup. Continue?</p>
+                        <button class="btn-primary" onclick="confirmRestoreData('${e.target.result}')">Yes, Restore</button>
+                        <button class="btn-export" onclick="document.getElementById('modal').classList.remove('show')">Cancel</button>
+                    `);
+                } catch (error) {
+                    showNotification('Invalid backup file format!', 'error');
+                }
+            };
+            reader.readAsText(file);
+            
+            event.target.value = '';
+        }
+
+        function confirmRestoreData(dataString) {
+            try {
+                const data = JSON.parse(dataString);
+                
+                incomeRecords = data.incomeRecords || [];
+                expenseRecords = data.expenseRecords || [];
+                receivableRecords = data.receivableRecords || [];
+                payableRecords = data.payableRecords || [];
+                fixedExpenseRecords = data.fixedExpenseRecords || [];
+                recordId = data.recordId || 1;
+                
+                updateIncomeTable();
+                updateExpenseTable();
+                updateReceivableTable();
+                updatePayableTable();
+                updateFixedExpenseTable();
+                updateDashboard();
+                saveData();
+                
+                document.getElementById('modal').classList.remove('show');
+                showNotification('Data restored successfully!');
+            } catch (error) {
+                showNotification('Error restoring data!', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
